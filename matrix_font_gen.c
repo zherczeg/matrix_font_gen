@@ -33,7 +33,7 @@ int load_file(char *file_name)
 
   if (!file)
   {
-    printf("Cannot open file '%s'\n", file_name);
+    fprintf(stderr, "Cannot open file '%s'\n", file_name);
     return 1;
   }
 
@@ -45,14 +45,14 @@ int load_file(char *file_name)
 
   if (!data)
   {
-    printf("Cannot allocate memory\n");
+    fprintf(stderr, "Cannot allocate memory\n");
     fclose(file);
     return 1;
   }
 
   if (fread(data, 1, size, file) != size)
   {
-    printf("Cannot read file\n");
+    fprintf(stderr, "Cannot read file\n");
     free(data);
     fclose(file);
     return 1;
@@ -73,7 +73,7 @@ int read_number(char **ptr_ref, int line)
 
   if (*ptr < '0' || *ptr > '9')
   {
-    printf("Line %d: decimal number expected.\n", line);
+    fprintf(stderr, "Line %d: decimal number expected.\n", line);
     return -1;
   }
 
@@ -83,7 +83,7 @@ int read_number(char **ptr_ref, int line)
 
     if (*ptr >= '0' && *ptr <= '9')
     {
-      printf("Line %d: Leading zeroes are not allowed.\n", line);
+      fprintf(stderr, "Line %d: leading zeroes are not allowed.\n", line);
       return -1;
     }
 
@@ -97,7 +97,7 @@ int read_number(char **ptr_ref, int line)
 
     if (result > 255)
     {
-      printf("Line %d: Numbers must be less than 256.\n", line);
+      fprintf(stderr, "Line %d: all numbers must be less than 256.\n", line);
       return -1;
     }
 
@@ -117,7 +117,7 @@ int get_width(char *ptr, int line)
   {
     if (*ptr != '.' && *ptr != '#')
     {
-      printf("Line %d: character matrix must be a combination of dot (.) and hashmark (#) characters.\n", line);
+      fprintf(stderr, "Line %d: character matrix must be a combination of dot (.) and number-sign (#) characters.\n", line);
       return -1;
     }
 
@@ -127,7 +127,7 @@ int get_width(char *ptr, int line)
 
   if (width < 1 || width > MAX_WIDTH)
   {
-    printf("Line %d: character width must be in [1..8] range.\n", line);
+    fprintf(stderr, "Line %d: character width must be in [1..%d] range.\n", line, MAX_WIDTH);
     return -1;
   }
 
@@ -153,13 +153,13 @@ int process_file()
 
   if (height < 4 || height > 8)
   {
-    printf("Line 1: font height must be in [4..8] range.\n");
+    fprintf(stderr, "Line 1: font height must be in [4..8] range.\n");
     return 1;
   }
 
   if (*ptr != ' ')
   {
-    printf("Line 1: Invalid first line format.\n");
+    fprintf(stderr, "Line 1: invalid first line format.\n");
     return 1;
   }
 
@@ -169,7 +169,7 @@ int process_file()
 
   if (*ptr != ' ')
   {
-    printf("Line 1: Invalid first line format.\n");
+    fprintf(stderr, "Line 1: invalid first line format.\n");
     return 1;
   }
 
@@ -179,13 +179,13 @@ int process_file()
 
   if (*ptr != '\n')
   {
-    printf("Line 1: Invalid first line format.\n");
+    fprintf(stderr, "Line 1: invalid first line format.\n");
     return 1;
   }
 
   if (first_char > last_char)
   {
-    printf("Line 1: First char must be lower than last char.\n");
+    fprintf(stderr, "Line 1: first character index must be lower or equal than last character index.\n");
     return 1;
   }
 
@@ -201,14 +201,14 @@ int process_file()
 
       if (char_index < first_char || char_index > last_char)
       {
-        printf("Line %d: decimal number expected between [%d..%d]\n",
-               line, first_char, last_char);
+        fprintf(stderr, "Line %d: decimal number expected between [%d..%d]\n",
+                line, first_char, last_char);
         return 1;
       }
 
       if (*ptr != '\n')
       {
-        printf("Line 1: Newline expected after number.\n");
+        fprintf(stderr, "Line 1: newline expected after character index.\n");
         return 1;
       }
 
@@ -220,8 +220,8 @@ int process_file()
     {
       if (ptr[0] < first_char || ptr[0] > last_char || ptr[1] != '\n')
       {
-        printf("Line %d: character expected between [%d..%d] range.\n",
-               line, first_char, last_char);
+        fprintf(stderr, "Line %d: character expected between [%d..%d] range.\n",
+                line, first_char, last_char);
         return 1;
       }
 
@@ -254,7 +254,7 @@ int process_file()
         }
         else if (*ptr != '.')
         {
-          printf("Line %d: character matrix must be a combination of dot (.) and hashmark (#) characters.\n", line);
+          fprintf(stderr, "Line %d: character matrix must be a combination of dot (.) and number-sign (#) characters.\n", line);
           return 1;
         }
 
@@ -263,7 +263,7 @@ int process_file()
 
       if (*ptr != '\n')
       {
-        printf("Line %d: character matrix must be terminated by newline.\n", line);
+        fprintf(stderr, "Line %d: newline expected after character matrix.\n", line);
         return 1;
       }
       line++;
@@ -350,7 +350,7 @@ int main(int argc, char *argv[])
 {
   if (argc < 2)
   {
-    printf("Filename missing\n");
+    fprintf(stderr, "Filename argument required.\n");
     return 1;
   }
 
